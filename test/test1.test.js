@@ -8,7 +8,7 @@ let driver = new webdriver.Builder().forBrowser('chrome').build();
 // Our test
 describe('Test VPC auto',  () => {
     before(() => {
-        driver.get('http://dev.oxs.co.il'); 
+        driver.get('https://stg.oxs.co.il'); 
         driver.manage().window().maximize();  
     });
 
@@ -18,7 +18,7 @@ describe('Test VPC auto',  () => {
     it('Testing right page',async  () => {
     // Set timeout to 10 seconds
     
-        try{
+        
         await driver.sleep(3000);
         let Title = await driver.getTitle();
         console.log(Title);
@@ -27,17 +27,12 @@ describe('Test VPC auto',  () => {
 
         
         // Find title and assert
-        }   
-            catch(e) {
         
-                console.log("Error:", e.message)
-                return false
-            }
     
     });
 
-    it('enter credentials', async () => {
-        try{
+    it('Log in to demo company', async () => {
+        
         await driver.sleep(3000);
         await driver.findElement(By.xpath('//*[@id="view"]/div/header/div[2]/p')).click();
         await driver.findElement(By.name('email')).sendKeys('origi@gmail.com');
@@ -45,14 +40,10 @@ describe('Test VPC auto',  () => {
         await driver.findElement(By.xpath('//*[@id="login-submit"]/input')).click();
         await driver.sleep(2000)
         let CompanyName = await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[1]/div/div[2]/h2'))).getText();
-        assert.equal(CompanyName, ' האקליפטוס')
-        }
-        catch(e) {
-            //marking the test as Failed if product has not been added to the cart
-            console.log("Error:", e.message)
-            return false
-        }    
+        assert.equal(CompanyName, 'גבעת האקליפטוס')
+        
     });
+
 
 
     it('create a building',  async () => {
@@ -103,10 +94,14 @@ describe('Test VPC auto',  () => {
 
     it('add tenant', async() => {
 
+        // in histadrut 730 only!!!!
+
         const Name = 'גל האוטומטי'
         const Phone = '0524455586' 
         const Email = 'qa@oxs.co.il';
-
+        driver.sleep(5000);
+        //await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[2]/div/div[1]/div[2]/img')),3000).click();
+        //await driver.wait(until.elementLocated(By.id('61e6c0a6939a73251c84d83f')),3000).click();
         await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div/div[4]/div/div/tbody/tr[1]/td[2]/div')),3000).click();
         await driver.sleep(3000);
         btnCrtTnt = await driver.wait(until.elementLocated(By.xpath('//*[@id="toolBarFilesIcon"]')),3000);
@@ -116,20 +111,65 @@ describe('Test VPC auto',  () => {
         await driver.wait(until.elementLocated(By.xpath('//*[@id="modalDescription"]/div/div/div[1]/div[2]/input')),3000).sendKeys(Name);
         await driver.findElement(By.xpath('//*[@id="modalDescription"]/div/div/div[3]/div[2]/input')).sendKeys(Phone);
         await driver.findElement(By.xpath('//*[@id="modalDescription"]/div/div/div[5]/div[2]/div/div/input')).sendKeys(Email);
-        driver.sleep(3000);
-        AddTntbtn = await driver.findElement(By.xpath('//*[@id="61e695a097e901136cb2aac1"]/div[1]/div[2]/div[2]/footer/center/div[2]/button'));
+        
+        AddTntbtn = await driver.wait(until.elementLocated(By.id('addTenant')),2000);
         AddTntbtn.click();
         successAddTnt = await driver.wait(until.elementLocated(By.xpath('//*[@id="modalDescription"]/div/div[2]/span/span'))).getText();
         assert.equal('דייר נוסף בהצלחה', successAddTnt);
-        driver.findElement(By.xpath('//*[@id="modalDescription"]/div/div[2]/span/span')).click();
-        driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[2]/div/div[1]/div[4]/div[3]/ul/li[1]/p')), 3000).click();
+        await driver.sleep(3000);
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="modalDescription"]/div/div[2]/div/div')),3000).click();
+        await driver.sleep(3000);
+        await driver.navigate().back();
 
 
     });
 
 
+    it('Create bank account', async () => {
+        
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[2]/div/div[1]/div[4]/div[2]/div/p')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[2]/div/div[1]/div[4]/div[2]/ul/li[5]/p/span')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[1]/div[2]/div/img')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[1]/div[2]/div/ul/li[1]')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[2]/div[2]/input')),3000).sendKeys('123');
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[3]/div[2]/input')),3000).sendKeys('12345');
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[4]/div[2]/input')),3000).sendKeys('John');
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[5]/div[2]/input')),3000).sendKeys('000000000');
+        const UploadFile = await driver.findElement(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[7]/div[2]/img'));
+        //not Working!!!!!!!!;
+        await UploadFile.sendKeys('"C:\\Users\\Gal\\Desktop\\Oxs_Testing\\QA_VPC\\1.pdf"');
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[8]/div[2]/img')),3000).sendKeys('./1.pdf');
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div[4]/div[2]/div[10]/div[2]/input')),3000).click();
+    });
 
 
+describe('CC tests', () => {
+        //*****only on stg env that have cardcom testing route********
 
+
+    it('Pay a regular payment for one month', async () => {
+        //*********only in histadrut 369********
+        await driver.get('https://stg.oxs.co.il');
+        await driver.sleep(3000);
+        await driver.findElement(By.xpath('//*[@id="view"]/div/header/div[2]/p')).click();
+        await driver.findElement(By.name('email')).sendKeys('origi@gmail.com');
+        await driver.findElement(By.name('password')).sendKeys('123123');
+        await driver.findElement(By.xpath('//*[@id="login-submit"]/input')).click();
+        await driver.sleep(2000) 
+        //start test
+        let name =  await driver.wait(until.elementLocated(By.xpath('//*[@id="view"]/div/div[3]/div/div/div/div[4]/div/div/tbody/tr[1]/td[2]/div')),3000);
+        console.log('this is the name' +name);
+        await name.click();
+
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="yearlyPaymentsRow"]/tbody/tr/td[1]/div/span/div')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="paymentTypesRow"]/tbody/tr/td[1]/div')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="paymentTypesRow"]/div/button')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="modalDescription"]/span/div/span/div[2]/div[2]/div[2]/label/div[1]/div')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="modalDescription"]/center/div/button')),3000).click();
+        await driver.wait(until.elementLocated(By.xpath('//*[@id="modalDescription"]/center/div/button')),3000).click();
+
+
+    });
+});
 
 });

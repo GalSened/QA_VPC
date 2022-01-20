@@ -1,7 +1,7 @@
 {
   "name": "qa_vpc",
   "version": "1.0.0",
-  "description": "automation teting for vpc",
+  "description": "automation testing for vpc",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 1000000 --reporter mochawesome"
